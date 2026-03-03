@@ -26,7 +26,7 @@ const SITE_CONFIG = {
   //  BRAND
   // ──────────────────────────────────────────────
   brand: {
-    name: "Chakki & Co.",
+    name: "CHAKKI & CO.",
     logoIcon: "⚙",
     tagline: "Fresh Atta On Demand",
     description: "Order fresh wheat and multigrain flour ground on demand from machines installed near your society. Custom blends, subscriptions, and doorstep delivery.",
@@ -279,7 +279,7 @@ const SITE_CONFIG = {
     tag: "Get In Touch",
     title: "Let's Talk",
     description: "Whether you want to bring Chakki & Co. to your society, become an operator, or just have a question — we'd love to hear from you.",
-    email: "hello@chakkiandco.com",
+    email: "hello@chakki.co",
     phone: "+91 98XXX XXXXX",
     location: "India",
     formSubjects: [
