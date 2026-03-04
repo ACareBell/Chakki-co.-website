@@ -342,7 +342,7 @@ const SITE_CONFIG = {
         title: "Legal",
         links: [
           { text: "Terms of Service", href: "#" },
-          { text: "Privacy Policy", href: "#" },
+          { text: "Privacy Policy", href: "privacy.html" },
           { text: "Refund Policy", href: "#" },
         ],
       },
