@@ -16,7 +16,7 @@ const SITE_CONFIG = {
   // ──────────────────────────────────────────────
   tracking: {
     facebookPixelId: "",          // e.g. "123456789012345"
-    googleAnalyticsId: "G-5RQK838BGZ",
+    googleAnalyticsId: "G-29G1PSW0BB",
     googleTagManagerId: "",       // e.g. "GTM-XXXXXXX"
     hotjarId: "",                 // e.g. "1234567"
     customHeadScript: "",         // raw <script> HTML to inject in <head>
