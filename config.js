@@ -16,7 +16,7 @@ const SITE_CONFIG = {
   // ──────────────────────────────────────────────
   tracking: {
     facebookPixelId: "",          // e.g. "123456789012345"
-    googleAnalyticsId: "G-29G1PSW0BB",
+    googleAnalyticsId: "G-5RQK838BGZ",
     googleTagManagerId: "",       // e.g. "GTM-XXXXXXX"
     hotjarId: "",                 // e.g. "1234567"
     customHeadScript: "",         // raw <script> HTML to inject in <head>
@@ -267,8 +267,8 @@ const SITE_CONFIG = {
   download: {
     title: "Get Fresh Atta<br/>In Minutes",
     description: "Download the Chakki & Co. app and start ordering fresh, chemical-free flour from your society's grinding station. Available on Android and iOS.",
-    playStoreUrl: "#",
-    appStoreUrl: "#",
+    playStoreUrl: "https://play.google.com/store/apps/details?id=com.chakkiandco.CHAKKI",
+    appStoreUrl: "https://apps.apple.com/app/idYOUR_APPLE_APP_ID",  // Replace YOUR_APPLE_APP_ID with your app's ID from App Store Connect (e.g. id1234567890)
     showQR: true,
   },
 
