@@ -1,15 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Homepage -->
   <url>
     <loc>https://chakki.co/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <lastmod>2026-03-25</lastmod>
   </url>
+
+  <!-- Privacy Policy -->
   <url>
     <loc>https://chakki.co/privacy.html</loc>
     <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.3</priority>
     <lastmod>2026-03-25</lastmod>
   </url>
+
+  <!--
+    ADD THESE when you create dedicated product / landing pages:
+
+  <url>
+    <loc>https://chakki.co/whole-wheat-chakki-atta</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>2026-03-25</lastmod>
+  </url>
+
+  <url>
+    <loc>https://chakki.co/multigrain-atta</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>2026-03-25</lastmod>
+  </url>
+
+  <url>
+    <loc>https://chakki.co/custom-atta-blend</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-03-25</lastmod>
+  </url>
+
+  <url>
+    <loc>https://chakki.co/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-03-25</lastmod>
+  </url>
+  -->
+
 </urlset>

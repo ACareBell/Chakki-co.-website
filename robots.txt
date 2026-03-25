@@ -1,5 +1,15 @@
+# robots.txt — chakki.co
 # https://www.robotstxt.org/robotstxt.html
+
 User-agent: *
 Allow: /
+Disallow: /config.js
+
+# Block common junk crawlers
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
 
 Sitemap: https://chakki.co/sitemap.xml
