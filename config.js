@@ -35,6 +35,56 @@ const SITE_CONFIG = {
   },
 
   // ──────────────────────────────────────────────
+  //  SEO (titles, descriptions, canonical base URL)
+  //  Title ~50–60 chars; meta description ~150–160 chars.
+  // ──────────────────────────────────────────────
+  seo: {
+    siteUrl: "https://chakki.co",
+    /** Page <title> — keep under ~60 characters for search results */
+    title: "Fresh Atta & Multigrain Chakki in India | CHAKKI & CO.",
+    /** Meta description — keep ~150–160 characters */
+    metaDescription:
+      "Order fresh wheat atta and custom multigrain flour from your society chakki in India. Ground on demand, chemical-free, with doorstep delivery. Download the Chakki & Co. app.",
+    /** Optional: absolute URL to a 1200×630 image for Open Graph / Twitter */
+    ogImageUrl: "",
+    openGraphLocale: "en_IN",
+    /** Comma-separated; use for niche terms (chakki, atta, grain, multigrain) */
+    keywords:
+      "chakki atta, fresh atta India, multigrain flour, society chakki, wheat atta delivery, grain grinding, custom atta blend, chemical free atta",
+  },
+
+  /**
+   * FAQ content for JSON-LD only (helps rich results; questions match Indian customer searches).
+   */
+  structuredDataFaq: [
+    {
+      question: "What is Chakki & Co.?",
+      answer:
+        "Chakki & Co. installs fresh flour grinding machines in residential societies across India. You order wheat atta or a custom multigrain blend on the app; flour is ground on demand at your society chakki and can be picked up or delivered.",
+    },
+    {
+      question: "Is the atta chemical-free and fresh?",
+      answer:
+        "Yes. Flour is milled only when you order—no long-stored packaged atta. We do not add preservatives, bleach, or additives; it is natural grain ground into wholesome flour.",
+    },
+    {
+      question: "Can I order multigrain or mixed atta?",
+      answer:
+        "Yes. You can create custom multigrain blends (for example wheat with ragi, bajra, or jowar) in ratios that suit your family, including options that work well for Indian diets and health needs.",
+    },
+    {
+      question: "Do you deliver fresh atta in India?",
+      answer:
+        "You can collect your order from your society grinding station or choose doorstep delivery where available. Delivery fees and coverage depend on your location and society.",
+    },
+    {
+      question: "How can my housing society get a chakki machine?",
+      answer:
+        "Societies can partner with Chakki & Co. for installation and operation of the grinding unit. Contact us through the website form or app to discuss partnership, capacity, and revenue sharing.",
+    },
+  ],
+
+  // ──────────────────────────────────────────────
   //  COLORS (change these to re-theme the site)
   // ──────────────────────────────────────────────
   colors: {
@@ -76,9 +126,10 @@ const SITE_CONFIG = {
   // ──────────────────────────────────────────────
   hero: {
     badge: "🌾 India's Fresh Flour Revolution",
-    titleLine1: "Fresh Atta,",
-    titleLine2: "On Demand.",
-    subtitle: "Custom wheat & multigrain flour, ground fresh from machines installed right in your society. No preservatives. No chemicals. Just pure, fresh atta delivered to your doorstep.",
+    titleLine1: "Fresh Chakki Atta,",
+    titleLine2: "Multigrain On Demand.",
+    subtitle:
+      "Custom wheat and multigrain atta for Indian homes—ground fresh at your society chakki. No preservatives or chemicals. Pure grain flour, pickup or doorstep delivery.",
     ctaPrimary: { text: "Get the App", link: "#download" },
     ctaSecondary: { text: "See How It Works", link: "#how-it-works" },
     floatingEmojis: ["🌾", "⚙", "📦"],
@@ -308,6 +359,7 @@ const SITE_CONFIG = {
       { text: "How It Works", href: "#how-it-works" },
       { text: "Features", href: "#features" },
       { text: "Pricing", href: "#pricing" },
+      { text: "FAQ", href: "#faq" },
       { text: "For Societies", href: "#societies" },
       { text: "Contact", href: "#contact" },
     ],
@@ -326,24 +378,25 @@ const SITE_CONFIG = {
           { text: "How It Works", href: "#how-it-works" },
           { text: "Features", href: "#features" },
           { text: "Pricing", href: "#pricing" },
+          { text: "FAQ", href: "#faq" },
           { text: "Download App", href: "#download" },
         ],
       },
       {
         title: "Company",
         links: [
-          { text: "About Us", href: "#" },
+          { text: "About Us", href: "#features" },
           { text: "For Societies", href: "#societies" },
-          { text: "Careers", href: "#" },
+          { text: "Careers", href: "#contact" },
           { text: "Contact", href: "#contact" },
         ],
       },
       {
         title: "Legal",
         links: [
-          { text: "Terms of Service", href: "#" },
+          { text: "Terms of Service", href: "#contact" },
           { text: "Privacy Policy", href: "privacy.html" },
-          { text: "Refund Policy", href: "#" },
+          { text: "Refund Policy", href: "#contact" },
         ],
       },
     ],

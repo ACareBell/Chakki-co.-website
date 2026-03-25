@@ -116,11 +116,154 @@
     if (C.font?.family) root.setProperty('--font', C.font.family);
   }
 
-  // ── Meta & Fonts ──
+  // ── Meta, canonical, Open Graph, Twitter, JSON-LD ──
+  function upsertHeadMeta(attrName, key, content) {
+    let el = Array.from(document.querySelectorAll(`meta[${attrName}]`)).find(
+      (m) => m.getAttribute(attrName) === key
+    );
+    if (!el) {
+      el = document.createElement('meta');
+      el.setAttribute(attrName, key);
+      document.head.appendChild(el);
+    }
+    el.setAttribute('content', content);
+  }
+
+  function absoluteUrl(pathOrUrl) {
+    const base = (C.seo?.siteUrl || '').replace(/\/$/, '');
+    if (!base) return pathOrUrl;
+    if (/^https?:\/\//i.test(pathOrUrl)) return pathOrUrl;
+    return `${base}/${String(pathOrUrl).replace(/^\//, '')}`;
+  }
+
+  function injectJsonLd(pageUrl) {
+    const seo = C.seo || {};
+    const base = (seo.siteUrl || '').replace(/\/$/, '');
+    if (!base) return;
+
+    const title = seo.title || `${C.brand.name} — ${C.brand.tagline}`;
+    const desc = seo.metaDescription || C.brand.description;
+
+    const org = {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: C.brand.name,
+      url: `${base}/`,
+      description: C.brand.description,
+      areaServed: { '@type': 'Country', name: 'India' },
+    };
+    const og = seo.ogImageUrl?.trim();
+    if (og) org.logo = absoluteUrl(og);
+    if (C.contact?.email) {
+      org.contactPoint = [{
+        '@type': 'ContactPoint',
+        email: C.contact.email,
+        contactType: 'customer support',
+        areaServed: 'IN',
+        availableLanguage: ['English', 'Hindi'],
+      }];
+    }
+
+    const website = {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: C.brand.name,
+      url: `${base}/`,
+      description: desc,
+      publisher: { '@type': 'Organization', name: C.brand.name },
+    };
+
+    const webPage = {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: title,
+      description: desc,
+      url: pageUrl,
+      isPartOf: { '@type': 'WebSite', name: C.brand.name, url: `${base}/` },
+    };
+
+    const faqItems = C.structuredDataFaq || [];
+    const faq = faqItems.length ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqItems.map(({ question, answer }) => ({
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: { '@type': 'Answer', text: answer },
+      })),
+    } : null;
+
+    const appLd = {
+      '@context': 'https://schema.org',
+      '@type': 'MobileApplication',
+      name: `${C.brand.name} App`,
+      applicationCategory: 'ShoppingApplication',
+      operatingSystem: 'Android, iOS',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+      description: desc,
+    };
+    if (C.download?.playStoreUrl) appLd.url = C.download.playStoreUrl;
+
+    [org, website, webPage, faq, appLd].filter(Boolean).forEach((data) => {
+      const s = document.createElement('script');
+      s.type = 'application/ld+json';
+      s.setAttribute('data-seo', 'jsonld');
+      s.textContent = JSON.stringify(data);
+      document.head.appendChild(s);
+    });
+  }
+
   function renderMeta() {
-    document.title = `${C.brand.name} — ${C.brand.tagline}`;
-    $('#metaDesc')?.setAttribute('content', C.brand.description);
+    const seo = C.seo || {};
+    const title = seo.title || `${C.brand.name} — ${C.brand.tagline}`;
+    const desc = seo.metaDescription || C.brand.description;
+    const pageUrl = seo.siteUrl ? `${seo.siteUrl.replace(/\/$/, '')}/` : '';
+
+    document.title = title;
+    $('#metaDesc')?.setAttribute('content', desc);
+    if (seo.keywords) upsertHeadMeta('name', 'keywords', seo.keywords);
+
+    upsertHeadMeta('property', 'og:type', 'website');
+    upsertHeadMeta('property', 'og:title', title);
+    upsertHeadMeta('property', 'og:description', desc);
+    if (pageUrl) upsertHeadMeta('property', 'og:url', pageUrl);
+    upsertHeadMeta('property', 'og:site_name', C.brand.name);
+    if (seo.openGraphLocale) {
+      upsertHeadMeta('property', 'og:locale', seo.openGraphLocale.replace(/-/g, '_'));
+    }
+
+    const ogImg = seo.ogImageUrl?.trim();
+    if (ogImg) {
+      const imgUrl = absoluteUrl(ogImg);
+      upsertHeadMeta('property', 'og:image', imgUrl);
+      upsertHeadMeta('name', 'twitter:card', 'summary_large_image');
+      upsertHeadMeta('name', 'twitter:image', imgUrl);
+    } else {
+      upsertHeadMeta('name', 'twitter:card', 'summary');
+    }
+    upsertHeadMeta('name', 'twitter:title', title);
+    upsertHeadMeta('name', 'twitter:description', desc);
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+    if (pageUrl) canonical.href = pageUrl;
+
+    let theme = document.querySelector('meta[name="theme-color"]');
+    if (!theme) {
+      theme = document.createElement('meta');
+      theme.name = 'theme-color';
+      document.head.appendChild(theme);
+    }
+    if (C.colors?.primary) theme.setAttribute('content', C.colors.primary);
+
     if (C.font?.googleFontsUrl) $('#fontLink')?.setAttribute('href', C.font.googleFontsUrl);
+
+    document.querySelectorAll('script[type="application/ld+json"][data-seo="jsonld"]').forEach((n) => n.remove());
+    if (pageUrl) injectJsonLd(pageUrl);
   }
 
   // ── Logo helper ──
@@ -210,18 +353,20 @@
   }
 
   // ── Section header helper ──
-  function sectionHeader(parentId, tag, title, desc) {
+  function sectionHeader(parentId, tag, title, desc, headingId) {
     const el = $(`#${parentId}`);
     el.innerHTML = '';
     el.appendChild(h('p', { class: 'section-tag', text: tag }));
-    el.appendChild(h('h2', { class: 'section-title', text: title }));
+    const h2attrs = { class: 'section-title', text: title };
+    if (headingId) h2attrs.id = headingId;
+    el.appendChild(h('h2', h2attrs));
     if (desc) el.appendChild(h('p', { class: 'section-desc', text: desc }));
   }
 
   // ── How It Works ──
   function renderHowItWorks() {
     const hiw = C.howItWorks;
-    sectionHeader('hiwHeader', hiw.tag, hiw.title, hiw.description);
+    sectionHeader('hiwHeader', hiw.tag, hiw.title, hiw.description, 'hiw-heading');
     const grid = $('#stepsGrid');
     grid.innerHTML = '';
     hiw.steps.forEach((step, i) => {
@@ -243,7 +388,7 @@
   // ── Features ──
   function renderFeatures() {
     const f = C.features;
-    sectionHeader('featuresHeader', f.tag, f.title, f.description);
+    sectionHeader('featuresHeader', f.tag, f.title, f.description, 'features-heading');
     const grid = $('#featuresGrid');
     grid.innerHTML = '';
     f.items.forEach(item => {
@@ -258,7 +403,7 @@
   // ── Pricing ──
   function renderPricing() {
     const p = C.pricing;
-    sectionHeader('pricingHeader', p.tag, p.title, p.description);
+    sectionHeader('pricingHeader', p.tag, p.title, p.description, 'pricing-heading');
 
     const grid = $('#pricingGrid');
     grid.innerHTML = '';
@@ -295,7 +440,7 @@
 
     const content = h('div', { class: 'societies-content' });
     content.appendChild(h('p', { class: 'section-tag', text: s.tag }));
-    content.appendChild(h('h2', { class: 'section-title text-left', text: s.title }));
+    content.appendChild(h('h2', { class: 'section-title text-left', id: 'societies-heading', text: s.title }));
     content.appendChild(h('p', { class: 'societies-desc', text: s.description }));
 
     const benefitsList = h('ul', { class: 'societies-benefits' });
@@ -330,7 +475,7 @@
   // ── Testimonials ──
   function renderTestimonials() {
     const t = C.testimonials;
-    sectionHeader('testimonialsHeader', t.tag, t.title, '');
+    sectionHeader('testimonialsHeader', t.tag, t.title, '', 'testimonials-heading');
 
     const grid = $('#testimonialsGrid');
     grid.innerHTML = '';
@@ -357,7 +502,7 @@
     layout.innerHTML = '';
 
     const content = h('div', { class: 'download-content' });
-    content.appendChild(h('h2', { class: 'section-title text-left', html: d.title }));
+    content.appendChild(h('h2', { class: 'section-title text-left', id: 'download-heading', html: d.title }));
     content.appendChild(h('p', { class: 'download-desc', text: d.description }));
 
     const buttons = h('div', { class: 'download-buttons' });
@@ -411,10 +556,33 @@
     layout.appendChild(visual);
   }
 
+  // ── FAQ (on-page + JSON-LD in renderMeta) ──
+  function renderFaq() {
+    const items = C.structuredDataFaq || [];
+    if (!items.length) return;
+    sectionHeader(
+      'faqHeader',
+      'FAQ',
+      'Questions from Indian customers',
+      'Everything about fresh chakki atta, multigrain flour, delivery, and society partnerships.',
+      'faq-heading'
+    );
+    const list = $('#faqList');
+    list.innerHTML = '';
+    items.forEach((item) => {
+      list.appendChild(
+        h('details', { class: 'faq-item' },
+          h('summary', { class: 'faq-summary', text: item.question }),
+          h('div', { class: 'faq-answer' }, h('p', { text: item.answer }))
+        )
+      );
+    });
+  }
+
   // ── Contact ──
   function renderContact() {
     const c = C.contact;
-    sectionHeader('contactHeader', c.tag, c.title, c.description);
+    sectionHeader('contactHeader', c.tag, c.title, c.description, 'contact-heading');
 
     const layout = $('#contactLayout');
     layout.innerHTML = '';
@@ -473,7 +641,8 @@
 
     // Brand column
     const brand = h('div', { class: 'footer-brand' });
-    brand.innerHTML = `<a href="#" class="nav-logo">${logoHTML()}</a>`;
+    const homeHref = C.seo?.siteUrl ? `${C.seo.siteUrl.replace(/\/$/, '')}/` : '/';
+    brand.innerHTML = `<a href="${homeHref}" class="nav-logo">${logoHTML()}</a>`;
     brand.appendChild(h('p', { text: `${C.brand.tagline}. Ground at your society, delivered to your door.` }));
 
     const social = h('div', { class: 'footer-social' });
@@ -523,14 +692,17 @@
     // Mobile toggle
     const navToggle = $('#navToggle');
     const navLinks = $('#navLinks');
+    const setNavOpen = (open) => {
+      navToggle.classList.toggle('active', open);
+      navLinks.classList.toggle('open', open);
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
     navToggle.addEventListener('click', () => {
-      navToggle.classList.toggle('active');
-      navLinks.classList.toggle('open');
+      setNavOpen(!navLinks.classList.contains('open'));
     });
     navLinks.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
-        navToggle.classList.remove('active');
-        navLinks.classList.remove('open');
+        setNavOpen(false);
       });
     });
 
@@ -665,6 +837,7 @@
     renderSocieties();
     renderTestimonials();
     renderDownload();
+    renderFaq();
     renderContact();
     renderFooter();
     setupInteractions();

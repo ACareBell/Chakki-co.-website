@@ -1,28 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-IN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title id="pageTitle">Loading...</title>
-  <meta name="description" id="metaDesc" content="" />
+  <!-- Static fallbacks for crawlers and first paint; script.js syncs with config.js -->
+  <title>Fresh Atta &amp; Multigrain Chakki in India | CHAKKI &amp; CO.</title>
+  <meta
+    name="description"
+    id="metaDesc"
+    content="Order fresh wheat atta and custom multigrain flour from your society chakki in India. Ground on demand, chemical-free, with doorstep delivery. Download the Chakki &amp; Co. app."
+  />
+  <meta
+    name="keywords"
+    content="chakki atta, fresh atta India, multigrain flour, society chakki, wheat atta delivery, grain grinding, custom atta blend, chemical free atta"
+  />
+  <link rel="canonical" href="https://chakki.co/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Fresh Atta &amp; Multigrain Chakki in India | CHAKKI &amp; CO." />
+  <meta
+    property="og:description"
+    content="Order fresh wheat atta and custom multigrain flour from your society chakki in India. Ground on demand, chemical-free, with doorstep delivery. Download the Chakki &amp; Co. app."
+  />
+  <meta property="og:url" content="https://chakki.co/" />
+  <meta property="og:site_name" content="CHAKKI &amp; CO." />
+  <meta property="og:locale" content="en_IN" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Fresh Atta &amp; Multigrain Chakki in India | CHAKKI &amp; CO." />
+  <meta
+    name="twitter:description"
+    content="Order fresh wheat atta and custom multigrain flour from your society chakki in India. Ground on demand, chemical-free, with doorstep delivery. Download the Chakki &amp; Co. app."
+  />
+  <meta name="theme-color" content="#1B6B5C" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link id="fontLink" href="" rel="stylesheet" />
-  <script src="config.js"></script>
+  <link
+    id="fontLink"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap"
+    rel="stylesheet"
+  />
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <!-- Navigation -->
-  <nav class="navbar" id="navbar">
+  <nav class="navbar" id="navbar" aria-label="Primary">
     <div class="container nav-container">
-      <a href="#" class="nav-logo" id="navLogo"></a>
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+      <a href="/" class="nav-logo" id="navLogo"></a>
+      <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Toggle navigation">
         <span></span><span></span><span></span>
       </button>
       <ul class="nav-links" id="navLinks"></ul>
     </div>
   </nav>
 
+  <main id="main-content">
   <!-- Hero -->
   <header class="hero" id="hero">
     <div class="container hero-container">
@@ -35,14 +66,14 @@
       </div>
       <div class="hero-visual">
         <div class="hero-phone">
-          <div class="phone-mockup">
+          <div class="phone-mockup" role="img" aria-label="App preview showing fresh atta and multigrain orders">
             <div class="phone-screen" id="heroPhone"></div>
           </div>
         </div>
-        <div id="heroFloats"></div>
+        <div id="heroFloats" aria-hidden="true"></div>
       </div>
     </div>
-    <div class="hero-wave">
+    <div class="hero-wave" aria-hidden="true">
       <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
         <path d="M0 60L48 52C96 44 192 28 288 24C384 20 480 28 576 40C672 52 768 68 864 72C960 76 1056 68 1152 56C1248 44 1344 28 1392 20L1440 12V120H0V60Z" fill="#ffffff"/>
       </svg>
@@ -50,7 +81,7 @@
   </header>
 
   <!-- Social Proof -->
-  <section class="social-proof">
+  <section class="social-proof" aria-label="Trust and scale">
     <div class="container">
       <p class="social-proof-text" id="proofHeadline"></p>
       <div class="proof-items" id="proofItems"></div>
@@ -58,7 +89,7 @@
   </section>
 
   <!-- How It Works -->
-  <section class="section" id="how-it-works">
+  <section class="section" id="how-it-works" aria-labelledby="hiw-heading">
     <div class="container">
       <div class="section-header" id="hiwHeader"></div>
       <div class="steps-grid" id="stepsGrid"></div>
@@ -66,7 +97,7 @@
   </section>
 
   <!-- Features -->
-  <section class="section section-alt" id="features">
+  <section class="section section-alt" id="features" aria-labelledby="features-heading">
     <div class="container">
       <div class="section-header" id="featuresHeader"></div>
       <div class="features-grid" id="featuresGrid"></div>
@@ -74,7 +105,7 @@
   </section>
 
   <!-- Pricing -->
-  <section class="section" id="pricing">
+  <section class="section" id="pricing" aria-labelledby="pricing-heading">
     <div class="container">
       <div class="section-header" id="pricingHeader"></div>
       <div class="pricing-grid" id="pricingGrid"></div>
@@ -83,14 +114,14 @@
   </section>
 
   <!-- For Societies -->
-  <section class="section section-alt" id="societies">
+  <section class="section section-alt" id="societies" aria-labelledby="societies-heading">
     <div class="container">
       <div class="societies-layout" id="societiesLayout"></div>
     </div>
   </section>
 
   <!-- Testimonials -->
-  <section class="section" id="testimonials">
+  <section class="section" id="testimonials" aria-labelledby="testimonials-heading">
     <div class="container">
       <div class="section-header" id="testimonialsHeader"></div>
       <div class="testimonials-grid" id="testimonialsGrid"></div>
@@ -98,23 +129,33 @@
   </section>
 
   <!-- Download App -->
-  <section class="section section-download" id="download">
+  <section class="section section-download" id="download" aria-labelledby="download-heading">
     <div class="container">
       <div class="download-layout" id="downloadLayout"></div>
     </div>
   </section>
 
+  <!-- FAQ (visible copy matches JSON-LD FAQPage) -->
+  <section class="section section-alt" id="faq" aria-labelledby="faq-heading">
+    <div class="container">
+      <div class="section-header" id="faqHeader"></div>
+      <div class="faq-list" id="faqList"></div>
+    </div>
+  </section>
+
   <!-- Contact -->
-  <section class="section section-alt" id="contact">
+  <section class="section section-alt" id="contact" aria-labelledby="contact-heading">
     <div class="container">
       <div class="section-header" id="contactHeader"></div>
       <div class="contact-layout" id="contactLayout"></div>
     </div>
   </section>
+  </main>
 
   <!-- Footer -->
   <footer class="footer" id="footer"></footer>
 
-  <script src="script.js"></script>
+  <script defer src="config.js"></script>
+  <script defer src="script.js"></script>
 </body>
 </html>
