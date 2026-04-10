@@ -319,7 +319,7 @@ const SITE_CONFIG = {
     title: "Get Fresh Atta<br/>In Minutes",
     description: "Download the Chakki & Co. app and start ordering fresh, chemical-free flour from your society's grinding station. Available on Android and iOS.",
     playStoreUrl: "https://play.google.com/store/apps/details?id=com.chakkiandco.CHAKKI",
-    appStoreUrl: "https://apps.apple.com/app/idYOUR_APPLE_APP_ID",  // Replace YOUR_APPLE_APP_ID with your app's ID from App Store Connect (e.g. id1234567890)
+    appStoreUrl: "https://apps.apple.com/in/app/chakki-co/id6759957148",  // Replace YOUR_APPLE_APP_ID with your app's ID from App Store Connect (e.g. id1234567890)
     showQR: true,
   },
 
@@ -330,8 +330,8 @@ const SITE_CONFIG = {
     tag: "Get In Touch",
     title: "Let's Talk",
     description: "Whether you want to bring Chakki & Co. to your society, become an operator, or just have a question — we'd love to hear from you.",
-    email: "hello@chakki.co",
-    phone: "+91 98XXX XXXXX",
+    email: "support@carebell.in",
+    phone: "+91 954046 9009",
     location: "India",
     formSubjects: [
       { value: "society", label: "Bringing Chakki & Co. to my society" },
@@ -346,7 +346,7 @@ const SITE_CONFIG = {
   //  SOCIAL LINKS
   // ──────────────────────────────────────────────
   social: {
-    instagram: "#",
+    instagram: "https://www.instagram.com/chakkiandcom/",
     twitter: "#",
     facebook: "#",
   },
