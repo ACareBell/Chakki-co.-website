@@ -517,8 +517,28 @@
       </a>`;
     content.appendChild(buttons);
 
-    if (d.showQR) {
-      content.appendChild(h('div', { class: 'download-qr', html: '<div class="qr-placeholder"><span>📱</span><p>Scan to Download</p></div>' }));
+    if (d.showQR && d.qrImage) {
+      const qrWrap = h('div', { class: 'download-qr' });
+      qrWrap.appendChild(h('p', { class: 'download-qr-label', text: d.qrCaption || 'Scan to download' }));
+      const qrHref = (d.qrLink && String(d.qrLink).trim()) || d.playStoreUrl || '#';
+      const img = h('img', {
+        class: 'download-qr-img',
+        src: d.qrImage,
+        alt: 'QR code — scan to download the Chakki & Co. app',
+        width: 200,
+        height: 200,
+        loading: 'lazy',
+        decoding: 'async',
+      });
+      qrWrap.appendChild(
+        h('a', {
+          href: qrHref,
+          class: 'download-qr-link',
+          'aria-label': 'Download the app (same link as QR code)',
+          rel: 'noopener noreferrer',
+        }, img)
+      );
+      content.appendChild(qrWrap);
     }
     layout.appendChild(content);
 
@@ -628,6 +648,13 @@
     form.appendChild(msgGroup);
 
     form.appendChild(h('button', { type: 'submit', class: 'btn btn-accent btn-lg btn-block', text: 'Send Message' }));
+    form.appendChild(h('p', {
+      class: 'form-status',
+      id: 'contactFormStatus',
+      role: 'status',
+      'aria-live': 'polite',
+      'aria-atomic': 'true',
+    }));
     layout.appendChild(form);
   }
 
@@ -755,21 +782,81 @@
     );
     document.querySelectorAll('.ssc-number').forEach(el => statObserver.observe(el));
 
-    // Contact form
+    // Contact form → Web3Forms (see config.js contact.form.web3formsAccessKey)
     const form = $('#contactForm');
     if (form) {
-      form.addEventListener('submit', (e) => {
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = form.querySelector('button[type="submit"]');
+        const statusEl = $('#contactFormStatus');
         const originalText = btn.textContent;
+        const accessKey = (C.contact?.form?.web3formsAccessKey || '').trim();
+
+        const setStatus = (text, kind) => {
+          if (!statusEl) return;
+          statusEl.textContent = text;
+          statusEl.classList.remove('form-status--error', 'form-status--success');
+          if (kind === 'error') statusEl.classList.add('form-status--error');
+          if (kind === 'success') statusEl.classList.add('form-status--success');
+        };
+
+        if (!accessKey) {
+          setStatus('Form email is not configured yet. Add your Web3Forms access key in config.js (see comment there).', 'error');
+          return;
+        }
+
+        const name = form.querySelector('#name')?.value?.trim() || '';
+        const email = form.querySelector('#email')?.value?.trim() || '';
+        const message = form.querySelector('#message')?.value?.trim() || '';
+        const subjectSelect = form.querySelector('#subject');
+        const subjectValue = subjectSelect?.value || '';
+        const subjectLabel = subjectSelect?.options[subjectSelect.selectedIndex]?.text || subjectValue;
+
         btn.textContent = 'Sending...';
         btn.disabled = true;
-        setTimeout(() => {
-          btn.textContent = 'Message Sent!';
-          btn.style.background = C.colors.success;
-          form.reset();
-          setTimeout(() => { btn.textContent = originalText; btn.style.background = ''; btn.disabled = false; }, 3000);
-        }, 1000);
+        setStatus('', null);
+
+        try {
+          const res = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({
+              access_key: accessKey,
+              subject: `[${C.brand.name}] Contact · ${subjectLabel}`,
+              name,
+              email,
+              message: `Topic: ${subjectLabel}\n\n${message}`,
+              replyto: email,
+              from_name: name,
+            }),
+          });
+          const data = await res.json().catch(() => ({}));
+
+          if (res.ok && data.success) {
+            btn.textContent = 'Message sent!';
+            btn.style.background = C.colors.success;
+            setStatus('Thanks — we received your message and will get back to you soon.', 'success');
+            if (typeof window.trackEvent === 'function') {
+              window.trackEvent('Lead', { content_name: 'ContactForm', subject: subjectValue });
+            }
+            form.reset();
+            setTimeout(() => {
+              btn.textContent = originalText;
+              btn.style.background = '';
+              btn.disabled = false;
+              setStatus('', null);
+            }, 5000);
+          } else {
+            const errMsg = (data && data.message) || `Could not send (${res.status}). Try again or email us directly.`;
+            setStatus(errMsg, 'error');
+            btn.textContent = originalText;
+            btn.disabled = false;
+          }
+        } catch (err) {
+          setStatus('Network error — please check your connection or email us directly.', 'error');
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
       });
     }
   }
@@ -797,15 +884,6 @@
       { threshold: 0.3 }
     );
     sections.forEach(s => sectionObserver.observe(s));
-
-    // Track form submission
-    const form = $('#contactForm');
-    if (form) {
-      form.addEventListener('submit', () => {
-        const subject = form.querySelector('#subject')?.value || '';
-        window.trackEvent('Lead', { content_name: 'ContactForm', subject });
-      }, true);
-    }
 
     // Track scroll depth milestones
     let maxScroll = 0;

@@ -321,6 +321,11 @@ const SITE_CONFIG = {
     playStoreUrl: "https://play.google.com/store/apps/details?id=com.chakkiandco.CHAKKI",
     appStoreUrl: "https://apps.apple.com/in/app/chakki-co/id6759957148",  // Replace YOUR_APPLE_APP_ID with your app's ID from App Store Connect (e.g. id1234567890)
     showQR: true,
+    /** Path to QR PNG (relative to site root). Regenerate the QR to match qrLink if you change the URL. */
+    qrImage: "images/app-download-qr.png",
+    qrCaption: "Scan to download",
+    /** Optional: URL encoded in the QR / tap target. Leave "" to use playStoreUrl. */
+    qrLink: "",
   },
 
   // ──────────────────────────────────────────────
@@ -340,6 +345,15 @@ const SITE_CONFIG = {
       { value: "franchise", label: "Franchise opportunity" },
       { value: "other", label: "Something else" },
     ],
+    /**
+     * Contact form → email (static site; no server required).
+     * 1) Sign up at https://web3forms.com with the inbox you want (e.g. support@carebell.in).
+     * 2) Create an Access Key and paste it below.
+     * 3) In Web3Forms, restrict the key to your domain (e.g. chakki.co) for security.
+     */
+    form: {
+      web3formsAccessKey: "0c836a66-8db3-40f2-aab2-795a34cfd588",
+    },
   },
 
   // ──────────────────────────────────────────────
