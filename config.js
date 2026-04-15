@@ -15,7 +15,7 @@ const SITE_CONFIG = {
   //  Set the IDs to enable. Leave empty "" to disable.
   // ──────────────────────────────────────────────
   tracking: {
-    facebookPixelId: "",          // e.g. "123456789012345"
+    facebookPixelId: "916298431406703",
     googleAnalyticsId: "G-5RQK838BGZ",
     googleTagManagerId: "",       // e.g. "GTM-XXXXXXX"
     hotjarId: "",                 // e.g. "1234567"

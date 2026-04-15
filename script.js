@@ -93,10 +93,21 @@
     }
   }
 
-  // Helper: track custom events (call from anywhere)
+  // Meta standard events only accept fbq('track', …); everything else must use trackCustom.
+  const FB_STANDARD_EVENTS = new Set([
+    'PageView', 'AddPaymentInfo', 'AddToCart', 'AddToWishlist', 'CompleteRegistration',
+    'Contact', 'CustomizeProduct', 'Donate', 'FindLocation', 'InitiateCheckout', 'Lead',
+    'Purchase', 'Schedule', 'Search', 'StartTrial', 'SubmitApplication', 'Subscribe', 'ViewContent',
+  ]);
+
+  // Helper: track events (Meta + GA4 + Hotjar)
   window.trackEvent = function(eventName, params) {
-    if (window.fbq) fbq('track', eventName, params);
-    if (window.gtag) gtag('event', eventName, params);
+    const p = params && typeof params === 'object' ? params : {};
+    if (window.fbq) {
+      if (FB_STANDARD_EVENTS.has(eventName)) fbq('track', eventName, p);
+      else fbq('trackCustom', eventName, p);
+    }
+    if (window.gtag) gtag('event', eventName, p);
     if (window.hj) hj('event', eventName);
   };
 
@@ -507,11 +518,11 @@
 
     const buttons = h('div', { class: 'download-buttons' });
     buttons.innerHTML = `
-      <a href="${d.playStoreUrl}" class="store-btn">
+      <a href="${d.playStoreUrl}" class="store-btn" data-app-platform="google_play" rel="noopener noreferrer">
         <svg class="store-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5v-17c0-.83.52-1.28 1-1.5l10 10-10 10c-.48-.22-1-.67-1-1.5zm2-14.5l7 7-7 7V6zm8.5 7L5 4.5l12.5 7.2-4 1.3zm0 0l4 1.3L7 21.5l6.5-8.5z"/></svg>
         <div><span class="store-label">Get it on</span><span class="store-name">Google Play</span></div>
       </a>
-      <a href="${d.appStoreUrl}" class="store-btn">
+      <a href="${d.appStoreUrl}" class="store-btn" data-app-platform="app_store" rel="noopener noreferrer">
         <svg class="store-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
         <div><span class="store-label">Download on the</span><span class="store-name">App Store</span></div>
       </a>`;
@@ -534,6 +545,7 @@
         h('a', {
           href: qrHref,
           class: 'download-qr-link',
+          'data-app-platform': 'qr',
           'aria-label': 'Download the app (same link as QR code)',
           rel: 'noopener noreferrer',
         }, img)
@@ -863,14 +875,80 @@
 
   // ── Track key user actions ──
   function setupEventTracking() {
-    // Track CTA clicks
-    document.querySelectorAll('a.btn, .store-btn').forEach(btn => {
+    document.body.addEventListener('click', (e) => {
+      const a = e.target.closest('a');
+      if (!a) return;
+
+      if (a.classList.contains('store-btn')) {
+        const platform = a.getAttribute('data-app-platform') || 'unknown';
+        window.trackEvent('DownloadApp', {
+          platform,
+          content_name: platform === 'google_play' ? 'Google Play' : platform === 'app_store' ? 'App Store' : platform,
+        });
+        return;
+      }
+
+      if (a.classList.contains('download-qr-link')) {
+        window.trackEvent('DownloadApp', { platform: 'qr', content_name: 'QR code' });
+        return;
+      }
+
+      const hrefAttr = a.getAttribute('href') || '';
+      if (hrefAttr === '#download' && a.closest('.footer-links')) {
+        window.trackEvent('DownloadSectionClick', {
+          link_text: (a.textContent || '').trim().slice(0, 120),
+        });
+        return;
+      }
+
+      if (a.closest('.footer-social') && /^https?:\/\//i.test(a.href)) {
+        window.trackEvent('SocialClick', {
+          content_name: (a.getAttribute('aria-label') || 'social').slice(0, 100),
+          destination: a.href,
+        });
+        return;
+      }
+
+      if (hrefAttr.startsWith('tel:')) {
+        window.trackEvent('Contact', { content_name: 'PhoneClick' });
+        return;
+      }
+      if (hrefAttr.startsWith('mailto:')) {
+        window.trackEvent('Contact', { content_name: 'EmailClick' });
+        return;
+      }
+
+      if (/^https?:\/\//i.test(hrefAttr)) {
+        let host = '';
+        try {
+          host = new URL(a.href).hostname;
+        } catch (_) { /* ignore */ }
+        if (host && host !== window.location.hostname) {
+          window.trackEvent('OutboundClick', {
+            link_url: a.href.slice(0, 500),
+            link_text: (a.textContent || '').trim().slice(0, 120),
+          });
+        }
+      }
+    });
+
+    document.querySelectorAll('a.btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const label = btn.textContent.trim();
+        const label = btn.textContent.trim().replace(/\s+/g, ' ');
         const href = btn.getAttribute('href') || '';
         window.trackEvent('CtaClick', { label, href });
       });
     });
+
+    const faqList = $('#faqList');
+    if (faqList) {
+      faqList.addEventListener('toggle', (ev) => {
+        const det = ev.target;
+        if (det.tagName !== 'DETAILS' || !det.open) return;
+        const question = det.querySelector('.faq-summary')?.textContent?.trim().slice(0, 500) || '';
+        window.trackEvent('FaqOpen', { question });
+      });
+    }
 
     // Track section views
     const sections = document.querySelectorAll('section[id]');
