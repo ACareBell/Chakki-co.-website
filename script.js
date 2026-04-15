@@ -25,8 +25,8 @@
     const t = C.tracking;
     if (!t) return;
 
-    // Facebook Pixel
-    if (t.facebookPixelId) {
+    // Facebook Pixel (skip if index.html already loaded the inline pixel — avoids double PageView)
+    if (t.facebookPixelId && !window.fbq) {
       !function(f,b,e,v,n,t2,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
       n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
       n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t2=b.createElement(e);t2.async=!0;
